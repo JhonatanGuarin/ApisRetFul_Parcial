@@ -34,7 +34,7 @@ module.exports = {
     getPlayer : async( req,res )=>{
       try{
         const {id} = req.params
-        const result = await Player.findById(id)
+        const result = await Player.findById(id).populate('team', 'name');
   
         return res.status(200).json({data:result})
       }catch(err){
