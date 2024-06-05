@@ -6,8 +6,7 @@ const Team = require('./../models/teams-model')
 module.exports = {
     getPlayers : async(req,res)=>{
       try{
-        const result = await Player.find()
-        //const result = await Modality.find({}).populate('projects')
+        const result = await Player.find().populate('team', 'name');
         return res.status(200).json({data:result})
       }catch(err){
         return res.status(500).json({err:err})
@@ -17,14 +16,12 @@ module.exports = {
       try {
         const { team: teamId, ...playerData } = req.body;
     
-        // Verificar que el equipo existe
         const teamExists = await Team.findById(teamId);
     
         if (!teamExists) {
-          return res.status(404).json({ error: 'Team not found' });
+          return res.status(404).json({ error: "El equipo no existe"  });
         }
-    
-        // Crear el nuevo jugador
+
         const player = new Player({ ...playerData, team: teamId });
         const result = await player.save();
     
@@ -33,6 +30,7 @@ module.exports = {
         return res.status(500).json({ error: "El equipo no existe" });
       }
     },
+
     getPlayer : async( req,res )=>{
       try{
         const {id} = req.params
@@ -43,6 +41,7 @@ module.exports = {
         return res.status(500).json({error:err})
       }
     },
+    
     updatePlayer : async(req,res)=>{
       
       try{
