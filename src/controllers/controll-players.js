@@ -1,5 +1,6 @@
 const { isObjectIdOrHexString } = require('mongoose')
 const Player = require('./../models/players-model')
+const Team = require('./../models/teams-model')
 
 
 module.exports = {
@@ -13,16 +14,24 @@ module.exports = {
       }
     },
     createPlayer : async(req,res)=>{
-      try{
-        const player = new Player(req.body)
-  
-        //TODO. validar que el código no exista, si existe return 201
-        const result = await player.save()
-  
-        return res.status(201).json({data:result})
-      }catch(err){
-        return res.status(500).json({err:err})
-      } 
+      try {
+        const { team: teamId, ...playerData } = req.body;
+    
+        // Verificar que el equipo existe
+        const teamExists = await Team.findById(teamId);
+    
+        if (!teamExists) {
+          return res.status(404).json({ error: 'Team not found' });
+        }
+    
+        // Crear el nuevo jugador
+        const player = new Player({ ...playerData, team: teamId });
+        const result = await player.save();
+    
+        return res.status(201).json({ data: result });
+      } catch (err) {
+        return res.status(500).json({ error: "El equipo no existe" });
+      }
     },
     getPlayer : async( req,res )=>{
       try{

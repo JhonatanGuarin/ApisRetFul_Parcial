@@ -16,7 +16,7 @@ router.post('/players', createPlayer)
 
 router.put('/players/:id', updatePlayer)
 
-router.delete('/delete/:id', deletePlayer)
+router.delete('/players/:id', deletePlayer)
 
 
 
